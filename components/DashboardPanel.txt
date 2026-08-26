@@ -1,0 +1,152 @@
+import type { Daily, DailyScore } from "../parser/types";
+import { formatDuration } from "../parser/DailyParser";
+
+interface Props {
+  day: Daily | null;
+  score: DailyScore | null;
+}
+
+const STATUS_COLORS: Record<string, string> = {
+  OK:          "var(--green)",
+  NOK:         "var(--red)",
+  IN_PROGRESS: "var(--yellow)",
+  TODO:        "var(--muted)",
+  OVERDUE:     "var(--orange)",
+  ON_HOLD:     "var(--cyan)",
+};
+
+function ScoreRing({ value, label }: { value: number; label: string }) {
+  const r = 28;
+  const circ = 2 * Math.PI * r;
+  const fill = (value / 100) * circ;
+  const color = value >= 70 ? "var(--green)" : value >= 40 ? "var(--yellow)" : "var(--red)";
+
+  return (
+    <div className="score-ring-wrap">
+      <svg width="72" height="72" viewBox="0 0 72 72">
+        <circle cx="36" cy="36" r={r} fill="none" stroke="var(--border)" strokeWidth="4" />
+        <circle
+          cx="36" cy="36" r={r}
+          fill="none"
+          stroke={color}
+          strokeWidth="4"
+          strokeDasharray={`${fill} ${circ}`}
+          strokeLinecap="round"
+          transform="rotate(-90 36 36)"
+          style={{ transition: "stroke-dasharray 0.6s ease" }}
+        />
+        <text x="36" y="40" textAnchor="middle" fontSize="13" fontWeight="700" fill={color}>
+          {value.toFixed(0)}%
+        </text>
+      </svg>
+      <span className="score-ring-label">{label}</span>
+    </div>
+  );
+}
+
+function CategoryBar({ name, score, countScore, itemCount, estimated, actual }: {
+  name: string;
+  score: number;
+  countScore: number;
+  itemCount: number;
+  estimated: number;
+  actual: number;
+}) {
+  const color = score >= 70 ? "var(--green)" : score >= 40 ? "var(--yellow)" : "var(--red)";
+  return (
+    <div className="cat-bar">
+      <div className="cat-bar-header">
+        <span className="cat-name">{name}</span>
+        <span className="cat-meta">{itemCount} items · est {formatDuration(estimated)}</span>
+      </div>
+      <div className="cat-bar-track">
+        <div
+          className="cat-bar-fill"
+          style={{ width: `${score}%`, background: color }}
+        />
+      </div>
+      <div className="cat-bar-footer">
+        <span style={{ color }}>quality {score.toFixed(1)}%</span>
+        <span className="cat-meta">count {countScore.toFixed(1)}%</span>
+        <span className="cat-meta">actual {formatDuration(actual)}</span>
+      </div>
+    </div>
+  );
+}
+
+export function DashboardPanel({ day, score }: Props) {
+  if (!day || !score) {
+    return (
+      <div className="panel-empty">
+        <span className="empty-icon">◈</span>
+        <p>Start typing your daily log<br />to see your dashboard.</p>
+      </div>
+    );
+  }
+
+  // Flatten all items for the item list
+  const allItems = day.categories.flatMap(c =>
+    c.items.map(i => ({ ...i, categoryName: c.name }))
+  );
+
+  return (
+    <div className="dashboard">
+      <div className="dashboard-date">{day.rawDateToken}</div>
+
+      {/* Score rings */}
+      <div className="score-rings">
+        <ScoreRing value={score.dayScore} label="Quality" />
+        <ScoreRing value={score.dayCountItemsScore} label="Quantity" />
+      </div>
+
+      {/* Time summary */}
+      <div className="time-row">
+        <div className="time-cell">
+          <span className="time-label">Estimated</span>
+          <span className="time-value">{formatDuration(score.estimatedTime)}</span>
+        </div>
+        <div className="time-cell">
+          <span className="time-label">Actual</span>
+          <span className="time-value" style={{ color: "var(--green)" }}>
+            {formatDuration(score.computedActualTime)}
+          </span>
+        </div>
+      </div>
+<br/>
+      {/* Category breakdown */}
+      <div className="section-title">Categories</div>
+      <div className="cat-list">
+        {score.categoryScores.map(c => (
+          <CategoryBar
+            key={c.categoryName}
+            name={c.categoryName}
+            score={c.categoryScore}
+            countScore={c.countItemsScore}
+            itemCount={c.itemCount}
+            estimated={c.estimatedTime}
+            actual={c.computedActualTime}
+          />
+        ))}
+      </div>
+<br/>
+      {/* Item list */}
+      <div className="section-title">Items</div>
+      <div className="item-list">
+        {allItems.map((item, i) => (
+          <div key={i} className="item-row" style={{ paddingLeft: `${item.treeLevel * 12}px` }}>
+            <span
+              className="item-status"
+              style={{ color: STATUS_COLORS[item.status] ?? "var(--muted)" }}
+            >
+              {item.status}{" | "}
+            </span>
+            <span className="item-summary">{item.summary}{" "}</span>
+            {item.actualTime > 0 && (
+              <span className="item-time">{formatDuration(item.computedActualTime)}</span>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}

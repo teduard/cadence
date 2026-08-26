@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- <link rel="icon" type="image/svg+xml" href="/vite.svg" /> -->
+    <link rel="icon" type="image/ico" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    
+    <link href="/src/style.css" rel="stylesheet">
+
+    <!--link rel="manifest" href="/manifest.webmanifest" /-->
+    <!-- <link rel="manifest" href="/assets/site.webmanifest"> -->
+    <meta name="theme-color" content="#1f2937" />
+
+    <title>monaco editor</title>
+  </head>
+  <body>
+    <style>
+      #h {
+        position: sticky;
+        top: 0;
+        z-index: 1002;
+      }
+      #footer {
+        position: sticky;
+        
+        z-index: 1002;
+
+   
+      }
+    </style>
+    
+    <div id="h"></div>
+
+    <div id="root"></div>
+
+    <div id="footer"></div>
+
+    <script type="module" src="main.tsx"></script>
+  </body>
+</html>
