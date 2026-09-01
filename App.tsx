@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import Editor, { useMonaco } from "@monaco-editor/react";
 import { registerBestSelfLanguage } from "./editor/language";
 import { registerBestSelfTheme } from "./editor/theme";
@@ -7,14 +7,20 @@ import { parseContent } from "./parser/DailyParser";
 import { DailyScoreCalculator } from "./parser/DailyScoreCalculator";
 import { DashboardPanel } from "./components/DashboardPanel";
 import { DiagnosticsPanel } from "./components/DiagnosticsPanel";
+import { DailyScore } from "./parser/types";
 import type { Daily, ParseDiagnostic } from "./parser/types.ts";
 import * as monaco from "monaco-editor";
 import { PdfPanel } from "./components/PdfPanel";
+import {StreakMap} from "./components/StreakMap";
+import {StreakMapStats} from "./components/StreakMapStats";
+import { PastDays } from "./components/PastDays";
 
 import './myEditor.css';
 import './App.css';
+import { DockNav } from "./components/ui/DockNav.tsx";
 
 const STORAGE_KEY = "bestself_content";
+const PastDays_STORAGE_KEY = "bestself_past_days";
 
 const DEFAULT_CONTENT = `#${new Date().getMonth() + 1}.${new Date().getDate()}.${new Date().getFullYear()}
 \t- Personal
@@ -37,12 +43,43 @@ const calculator = new DailyScoreCalculator();
 export default function App() {
   const monacoInstance = useMonaco();
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
+
+  const [pastDaysContent, setPastDaysContent] = useState(
+    () => localStorage.getItem(PastDays_STORAGE_KEY) ?? ""
+  );
+
   const [content, setContent] = useState(
     () => localStorage.getItem(STORAGE_KEY) ?? DEFAULT_CONTENT
   );
+
+  const [pastDays, setPastDays] = useState<Daily[]>([]);
+
+  //const scores = days.length > 0 ? calculator.computeAll(days) : [];
+  const [pastScore, setPastScore] = useState<DailyScore[]>([]);
+
+  const handlePastDaysContentChange = useCallback((value: string | undefined) => {
+    const text = value ?? "";
+    const lines = text.split("\n");
+    const result = parseContent(lines);
+    const parsedDays = [...result.value];
+    setPastDays(parsedDays);
+
+    const scores = parsedDays.length > 0 ? calculator.computeAll(parsedDays) : [];
+
+    setPastScore([...scores]);
+
+    //console.log("result:", result);
+    //console.log("scores:", scores);
+
+  },[pastDaysContent]);
+
+  useEffect(() => {
+    handlePastDaysContentChange(pastDaysContent);
+  }, []);
+
   const [days, setDays] = useState<Daily[]>([]);
   const [diagnostics, setDiagnostics] = useState<ParseDiagnostic[]>([]);
-  const [activePanel, setActivePanel] = useState<"dashboard" | "diagnostics" | "pdf">("dashboard");
+  const [activePanel, setActivePanel] = useState<"dashboard" | "past_days" | "diagnostics" | "pdf">("dashboard");
   const parseTimer = useRef<ReturnType<typeof setTimeout>>();
 
   // Register language, theme, completions once Monaco is ready
@@ -63,6 +100,9 @@ export default function App() {
     parseTimer.current = setTimeout(() => {
       const lines = text.split("\n");
       const result = parseContent(lines);
+
+      console.table(result.diagnostics);
+
       setDiagnostics(result.diagnostics);
       setDays(result.value);
 
@@ -120,6 +160,25 @@ export default function App() {
 	// 	return () => editor?.dispose();
 	// }, [monacoEl.current]);
 
+//const dockActive = modal ?? (searchResults ? "search" : view === "browse" ? "grid" : "home");
+const dockActive = activePanel;
+
+const handleDockSelect = (id: string) => {
+  console.log("in handleDockSelect: id = ", id);
+  setActivePanel(id as "dashboard" | "past_days" | "diagnostics" | "pdf");
+}
+
+useEffect(() => {
+  console.log("activePanel changed to: ", activePanel);
+}, [activePanel]);
+
+  let streakMapsContent = useMemo(() => (
+    <>
+    <StreakMapStats days={pastDays} scores={pastScore} statType="steps"/>
+    <StreakMapStats days={pastDays} scores={pastScore} statType="phone_time"/>
+    <StreakMap days={pastDays} scores={pastScore}/>
+    </>
+  ),[pastDays, pastScore]);
 
   return (
     <div className="app">
@@ -129,35 +188,44 @@ export default function App() {
             <span className="logo-icon">◈</span>
             <span className="logo-text">Cadence</span>
           </div>
-          <span className="logo-sub">Journal Studio</span>
+          <span className="logo-sub">your daybook</span>
         </div>
         <div className="header-right">
+        {/* <button
+            className={`panel-tab ${activePanel === "past_days" ? "active" : ""}`}
+            onClick={() => setActivePanel("past_days")}
+          >
+            Past Days
+          </button> */}
+
           {latestDay && (
             <span className="current-date">{latestDay.rawDateToken}</span>
           )}
-          <button
+          {/* <button
             className={`panel-tab ${activePanel === "dashboard" ? "active" : ""}`}
             onClick={() => setActivePanel("dashboard")}
           >
             Dashboard
-          </button>
+          </button> */}
           <button
             className={`panel-tab ${activePanel === "diagnostics" ? "active" : ""}`}
             onClick={() => setActivePanel("diagnostics")}
           >
-            Diagnostics
+            
             {(errorCount > 0 || warnCount > 0) && (
+              <>Diagnostics
               <span className={`badge ${errorCount > 0 ? "error" : "warn"}`}>
                 {errorCount > 0 ? errorCount : warnCount}
               </span>
+              </>
             )}
           </button>
-          <button
+          {/* <button
             className={`panel-tab ${activePanel === "pdf" ? "active" : ""}`}
             onClick={() => setActivePanel("pdf")}
           >
             PDF
-          </button>
+          </button> */}
         </div>
       </header>
 
@@ -169,15 +237,29 @@ export default function App() {
       <div className="app-body">
         <div className={`right-pane ${activePanel === "pdf" ? "right-pane--pdf" : ""}`}>
           {activePanel === "dashboard" ? (
-            <DashboardPanel day={latestDay} score={latestScore} days={days} scores={scores} />
+            <div>
+
+            <DashboardPanel day={latestDay} score={latestScore} days={pastDays} scores={pastScore} />
+
+            {/* <StreakMapStats days={pastDays} scores={pastScore} statType="steps"/>
+            <StreakMapStats days={pastDays} scores={pastScore} statType="phone_time"/>
+            
+            <StreakMap days={pastDays} scores={pastScore}/>  */}
+            
+            </div>
           ) : activePanel === "pdf" ? (
             <PdfPanel day={latestDay} score={latestScore} />
-          ) : (
+          ) : activePanel === "diagnostics" ? (
             <DiagnosticsPanel diagnostics={diagnostics} />
-          )}
+          ) : (
+            <PastDays pastDays={pastDays} pastScores={pastScore}/>
+          )
+        }
         </div>
 
-        <div className="editor-pane">
+        <div className={"editor-pane"+ (
+          ["past_days", "pdf"].includes(activePanel) ? " hidden" : "")}>
+
           <Editor
             
             height="100%"
@@ -215,9 +297,26 @@ export default function App() {
             }}
           />
         </div>
+      
 
+        {activePanel === "past_days" && 
+          <div className="past-days">
+            {streakMapsContent}
+          
+
+            <div className="viewer-pane">
+              <textarea disabled value={(pastDaysContent || "").substr(0, 2000) + (pastDaysContent.length > 2000 ? "\n\n... (truncated)" : "")}
+              style={{width: "100%", height: "100%", fontSize: "14px", fontFamily: "'JetBrains Mono', 'Fira Code', monospace", padding: "10px", boxSizing: "border-box"}}
+              > </textarea>
+              
+            </div>
+
+          </div>
+        }
 
       </div>
+
+      <DockNav active={dockActive} onSelect={handleDockSelect} />
     </div>
   );
 }

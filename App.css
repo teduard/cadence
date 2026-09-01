@@ -5,10 +5,15 @@
   --bg:        #21252B;
   --surface:   #282C34;
   --surface2:  #2C313A;
+  --surface3:  #3e6d63;
   --border:    #3E4451;
-  --muted:     #5C6370;
+  --muted:     #5e646f;
   --text:      #ABB2BF;
   --text-hi:   #DCDFE4;
+  --text-dark:  #191a1c;
+
+  /* --signal: #ef4b4b; */
+  --signal: #4fd1c5;
 
   --green:     #98C379;
   --red:       #E06C75;
@@ -32,6 +37,20 @@ html, body, #root {
   font-family: var(--font-mono);
   font-size: 18px;
   -webkit-font-smoothing: antialiased;
+}
+
+.hidden {
+  /* border: 3px solid red; */
+  visibility: hidden;
+}
+
+.selected {
+  background: var(--surface3);
+  border-radius: var(--radius);
+}
+
+.item-statistic {
+  color: var(--text-hi);
 }
 
 /* ── App shell ──────────────────────────────────────────────────────────────── */
@@ -105,6 +124,28 @@ html, body, #root {
   overflow: hidden;
 }
 
+.past-days {
+  display: flex;
+  width: 100%;
+  flex:auto;
+  flex-direction: column;
+  order: 0;
+  min-width: 0;
+  border-right: 1px solid var(--border);
+}
+
+.viewer-pane {
+  display: flex;
+  width: 100%;
+  flex:auto;
+  order: 1;
+  min-width: 0;
+  border-right: 1px solid var(--border);
+
+  border: 1px solid green;
+  flex-direction: column;
+}
+
 .editor-pane {
   display: flex;
   width: 70%;
@@ -112,6 +153,15 @@ html, body, #root {
   order: 1;
   min-width: 0;
   border-right: 1px solid var(--border);
+  flex-direction: column;
+}
+
+.streak-map {
+  flex-direction: row;
+  padding:10px;
+  width: 100%;
+  min-width: 0;
+  font-size: 14px;
 }
 
 .right-pane {
@@ -380,7 +430,7 @@ html, body, #root {
 
 /* ── PDF panel ──────────────────────────────────────────────────────────────── */
 .right-pane--pdf {
-  width: 600px;  /* wider for PDF preview */
+  width: 100%;  /* wider for PDF preview */
 }
 
 .pdf-panel {

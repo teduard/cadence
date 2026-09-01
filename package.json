@@ -11,6 +11,9 @@
   "dependencies": {
     "@monaco-editor/react": "^4.6.0",
     "@react-pdf/renderer": "^4.3.2",
+    "@uiw/react-heat-map": "^2.3.4",
+    "@uiw/react-tooltip": "^4.22.3",
+    "lucide-react": "^1.38.0",
     "monaco-editor": "^0.47.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

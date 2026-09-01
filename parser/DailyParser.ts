@@ -195,9 +195,9 @@ function parseItem(
       continue;
     }
 
-    if (content === DEFINITION_TOKEN) { currentSection = "definition"; continue; }
-    if (content === TIMELINE_TOKEN)   { currentSection = "timeline";   continue; }
-    if (content === RESULT_TOKEN)     { currentSection = "result";     continue; }
+    if (content === DEFINITION_TOKEN || content === `${DEFINITION_TOKEN}\r`) { currentSection = "definition"; continue; }
+    if (content === TIMELINE_TOKEN || content === `${TIMELINE_TOKEN}\r`)   { currentSection = "timeline";   continue; }
+    if (content === RESULT_TOKEN || content === `${RESULT_TOKEN}\r`)     { currentSection = "result";     continue; }
 
     switch (currentSection) {
       case "definition": defLines.push(content); break;

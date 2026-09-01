@@ -301,7 +301,7 @@ export function DailyPdfDocument({ day, score }: Props) {
         <View style={S.header}>
           <Text style={S.headerTitle}>
             <Text style={S.headerTitleName}>&nbsp;Cadence&nbsp;</Text>
-            <Text style={S.headerSubTitle}>&nbsp;&nbsp;Journal Editor</Text>
+            <Text style={S.headerSubTitle}>&nbsp;&nbsp;your daybook</Text>
           </Text>
           
           <Text style={S.headerDate}>{day.rawDateToken}</Text>

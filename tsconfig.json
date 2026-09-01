@@ -4,8 +4,9 @@
 		"strict": true,
 		"module": "ESNext",
 		"jsx": "react-jsx",
-		"moduleResolution": "node",
-		"allowSyntheticDefaultImports": true
+		//"moduleResolution": "node",
+		"allowSyntheticDefaultImports": true,
+		"types": ["vite/client"]
 	},
-	//"include": ["./src"]
+	"include": ["./src"]
 }

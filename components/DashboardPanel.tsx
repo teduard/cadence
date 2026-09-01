@@ -4,6 +4,7 @@ import {
 } from "recharts";
 import type { Daily, DailyScore } from "../parser/types";
 import { formatDuration } from "../parser/DailyParser";
+import { useMemo } from "react";
 
 interface Props {
   day: Daily | null;
@@ -132,17 +133,19 @@ export function DashboardPanel({ day, score, days, scores }: Props) {
   );
 
   //console.log("days:", days);
-  console.log("scores:", scores);
+  //console.log("scores:", scores);
   //console.log("allItems:", allItems);
 
   const dayCount = days?.length ?? 0;
 
-    let MAX_DAYS = Math.min(500, dayCount-1);
+  let MAX_DAYS = Math.min(500, dayCount-1);
 
   const summaryItems = day.categories.flatMap(cat =>
     cat.items.map(item => ({ ...item, categoryName: cat.name }))
   );
 
+  console.log("DAY:", day);
+  console.log("#### summaryItems = ", summaryItems);
 
   summaryItems.forEach(item => {
         item.computedActualTime = 0;
@@ -159,7 +162,7 @@ export function DashboardPanel({ day, score, days, scores }: Props) {
       cat.items.map(item => ({ ...item, categoryName: cat.name }))
     );
 
-    console.log("curDayItems", curDayItems);
+    //console.log("curDayItems", curDayItems);
 
     summaryItems.forEach(item => {
       const curDay = curDayItems.find(pi => pi.summary === item.summary);
@@ -205,6 +208,57 @@ let categories = ["monitorizat timpul de somn",
         return acc + (item.computedActualTime ? item.computedActualTime : 0);
       },0);
   
+let pastDaysContent = useMemo(() => (
+  <>
+  <div className="section-title">Past {MAX_DAYS}-days / Task stats</div>
+
+  <div className="item-list">
+    {summaryItems.map((item, i) => (
+      <>
+      {
+      categories
+      .includes(item.summary) &&
+      <div
+        key={i}
+        className="item-row"
+        style={{ paddingLeft: `${item.treeLevel * 12}px` }}
+      >
+        <span
+          className="item-status"
+          style={{ color: "var(--green)" }}
+        >
+          {/* how many time the status was OK / how many times the task appeared */}
+          {item.actualTime} OK 
+          <span
+          style={{ color: "var(--text)" }}
+        >
+          &nbsp;/ {item.estimatedTime}
+        </span>
+        </span>
+        
+        <span className="item-summary">{item.summary}</span>
+        {item.computedActualTime > 0 && (
+          <span className="item-time">{formatDuration(item.computedActualTime)}</span>
+        )}
+      </div>
+      }
+      </>
+    ))}
+
+    <hr style={{ border: "1px solid var(--muted)" }}/>
+    <div
+        key={"total"}
+        className="item-row">
+            <span className="item-status"></span>
+            <span className="item-summary">Total time</span>
+        <span className="item-time">{formatDuration(totalTime)}</span>
+    </div>
+
+    </div>
+    
+      </>
+),[summaryItems, MAX_DAYS, totalTime]);
+
   return (
     <div className="dashboard">
       <div className="dashboard-date">{day.rawDateToken}</div>
@@ -343,50 +397,7 @@ let categories = ["monitorizat timpul de somn",
       </div>
 
       {/* Past MAX_DAYS-days stats */}
-      <div className="section-title">Past {MAX_DAYS}-days / Task stats</div>
-      <div className="item-list">
-        {summaryItems.map((item, i) => (
-          <>
-          {
-          categories
-          .includes(item.summary) &&
-          <div
-            key={i}
-            className="item-row"
-            style={{ paddingLeft: `${item.treeLevel * 12}px` }}
-          >
-            <span
-              className="item-status"
-              style={{ color: "var(--green)" }}
-            >
-              {/* how many time the status was OK / how many times the task appeared */}
-              {item.actualTime} OK 
-              <span
-              style={{ color: "var(--text)" }}
-            >
-              &nbsp;/ {item.estimatedTime}
-            </span>
-            </span>
-            
-            <span className="item-summary">{item.summary}</span>
-            {item.computedActualTime > 0 && (
-              <span className="item-time">{formatDuration(item.computedActualTime)}</span>
-            )}
-          </div>
-          }
-          </>
-        ))}
-
-        <hr style={{ border: "1px solid var(--muted)" }}/>
-          <div
-              key={"total"}
-              className="item-row">
-                 <span className="item-status"></span>
-                 <span className="item-summary">Total time</span>
-              <span className="item-time">{formatDuration(totalTime)}</span>
-          </div>
-
-      </div>
+      {pastDaysContent}
     </div>
   );
 }
