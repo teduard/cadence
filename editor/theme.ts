@@ -26,7 +26,7 @@ export function registerBestSelfTheme(monaco: typeof Monaco) {
       { token: "bs.section.body", foreground: "9DA5B4" },
     ],
     colors: {
-      "editor.background":           "#21252B",
+      // "editor.background":           "#21252B",
       "editor.foreground":           "#ABB2BF",
       "editor.lineHighlightBackground": "#2C313A",
       "editorLineNumber.foreground": "#4B5263",

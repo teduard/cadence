@@ -315,7 +315,7 @@ const [value, setValue] = useState<any>(
 
                 style={{ color: '#ffffff' }}
                 value={value}
-                width={750}
+                width={850}
                 height={150}
                 space={3}
                 weekLabels={['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']}

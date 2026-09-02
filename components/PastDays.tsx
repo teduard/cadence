@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { formatDuration } from "../parser/DailyParser";
 import { Daily, DailyScore } from "../parser/types";
 
@@ -14,10 +14,13 @@ const STATUS_COLORS: Record<string, string> = {
 interface Props {
   pastDays: Daily[] | null;
   pastScores: DailyScore[] | null;
+  onSelect: (id: string) => void;
 }
 
-export function PastDays({pastDays, pastScores}:Props) {
-  let allItems: Array<any> = [
+export function PastDays({pastDays, pastScores, onSelect}:Props) {
+    const [allItems, setAllItems] = useState<Array<any>>([]);
+ /*
+    let allItems: Array<any> = [
     {
       status: "OK",
       treeLevel: 1,
@@ -52,8 +55,31 @@ export function PastDays({pastDays, pastScores}:Props) {
     )),
     
   ];
+  */
 
-  const [selectedItem, setSelectedItem] = useState<string | null>(null);
+const [selectedItem, setSelectedItem] = useState<string | null>(null);
+
+useEffect(() => {
+    let data:Array<any> = [];
+
+    console.log("pastDays in PastDays component:", pastDays);
+    console.log("pastScores in PastDays component:", pastScores);
+
+    if(pastScores) {
+        pastScores.forEach((day) => {
+            data.push({
+                status: "OK",
+                treeLevel: 1,
+                summary: day.date,
+                computedActualTime: 10,
+                score: Math.floor(day.dayScore),
+                countitemsScore: Math.floor(day.dayCountItemsScore),
+            }
+        )
+        });
+    }
+    setAllItems(data);
+},[pastScores]);
 
 let pastDaysContent = useMemo(() => (
     <>
@@ -63,7 +89,7 @@ let pastDaysContent = useMemo(() => (
             <div className="item-row">There are
             <span
               style={{ color: "var(--green)" }}
-            >241</span> tracked days
+            >{pastDays?.length}</span> tracked days
             </div>
 
         <div className="section-title">Items</div>
@@ -76,6 +102,7 @@ let pastDaysContent = useMemo(() => (
               onClick={() => {
                     console.log("Clicked item:", item.summary);
                     setSelectedItem(item.summary);
+                    onSelect(item.summary);
                     }
                 }
             >
@@ -90,7 +117,7 @@ let pastDaysContent = useMemo(() => (
                         style={{ color: STATUS_COLORS[item.status] ?? "var(--muted)" }}
                     >
                         {/* {item.status} */}
-                        34%
+                        {item.score}%
                     </span>
                     
                     <span className="item-statistic">Count </span> 
@@ -100,7 +127,7 @@ let pastDaysContent = useMemo(() => (
                         style={{ color: STATUS_COLORS[item.status] ?? "var(--muted)" }}
                     >
                         {/* {item.status} */}
-                        56%
+                        {item.countitemsScore}%
                     </span>
                   </>
                 )}

@@ -14,10 +14,15 @@ import { PdfPanel } from "./components/PdfPanel";
 import {StreakMap} from "./components/StreakMap";
 import {StreakMapStats} from "./components/StreakMapStats";
 import { PastDays } from "./components/PastDays";
+import {CalendarPage} from "./components/calendar/CalendarPage";
+import { rows, titles, heroTitle } from "./data";
+import Grainient from './components/grainient/Grainient';
 
 import './myEditor.css';
 import './App.css';
 import { DockNav } from "./components/ui/DockNav.tsx";
+import { MusicPlayerWidget } from "./components/ui/MusicPlayerWidget.tsx";
+import { Title } from "./types.ts";
 
 const STORAGE_KEY = "bestself_content";
 const PastDays_STORAGE_KEY = "bestself_past_days";
@@ -57,6 +62,8 @@ export default function App() {
   //const scores = days.length > 0 ? calculator.computeAll(days) : [];
   const [pastScore, setPastScore] = useState<DailyScore[]>([]);
 
+  const [selected, setSelected] = useState<Title | null>(null);
+
   const handlePastDaysContentChange = useCallback((value: string | undefined) => {
     const text = value ?? "";
     const lines = text.split("\n");
@@ -79,7 +86,7 @@ export default function App() {
 
   const [days, setDays] = useState<Daily[]>([]);
   const [diagnostics, setDiagnostics] = useState<ParseDiagnostic[]>([]);
-  const [activePanel, setActivePanel] = useState<"dashboard" | "past_days" | "diagnostics" | "pdf">("dashboard");
+  const [activePanel, setActivePanel] = useState<"dashboard" | "past_days" | "diagnostics" | "pdf" | "calendar">("dashboard");
   const parseTimer = useRef<ReturnType<typeof setTimeout>>();
 
   // Register language, theme, completions once Monaco is ready
@@ -135,6 +142,18 @@ export default function App() {
     handleChange(content);
   }, []);
 
+  const [selectedPastDay, setSelectedPastDay] = useState<string | null>(null);
+
+  const onSelectPastDay = useCallback((id: string) => {
+    console.log("onSelectPastDay called with id:", id);
+    setSelectedPastDay(id);
+
+    let x = pastDays?.filter((day) => day.date === id)
+    
+    console.log("pastDays:", pastDays);
+    console.log("Filtered pastDays for selectedPastDay:", x);
+  }, []);
+
   const scores = days.length > 0 ? calculator.computeAll(days) : [];
   const latestScore = scores[0] ?? null;
   const latestDay = days[0] ?? null;
@@ -181,6 +200,7 @@ useEffect(() => {
   ),[pastDays, pastScore]);
 
   return (
+    
     <div className="app">
       <header className="app-header">
         <div className="header-left">
@@ -207,19 +227,21 @@ useEffect(() => {
           >
             Dashboard
           </button> */}
+           {(errorCount > 0 || warnCount > 0) && (
           <button
             className={`panel-tab ${activePanel === "diagnostics" ? "active" : ""}`}
             onClick={() => setActivePanel("diagnostics")}
           >
             
-            {(errorCount > 0 || warnCount > 0) && (
+           
               <>Diagnostics
               <span className={`badge ${errorCount > 0 ? "error" : "warn"}`}>
                 {errorCount > 0 ? errorCount : warnCount}
               </span>
               </>
-            )}
+            
           </button>
+          )}
           {/* <button
             className={`panel-tab ${activePanel === "pdf" ? "active" : ""}`}
             onClick={() => setActivePanel("pdf")}
@@ -237,7 +259,7 @@ useEffect(() => {
       <div className="app-body">
         <div className={`right-pane ${activePanel === "pdf" ? "right-pane--pdf" : ""}`}>
           {activePanel === "dashboard" ? (
-            <div>
+            <div className="dashboard-pane">
 
             <DashboardPanel day={latestDay} score={latestScore} days={pastDays} scores={pastScore} />
 
@@ -251,18 +273,20 @@ useEffect(() => {
             <PdfPanel day={latestDay} score={latestScore} />
           ) : activePanel === "diagnostics" ? (
             <DiagnosticsPanel diagnostics={diagnostics} />
+          ) : activePanel === "calendar" ? (
+            <CalendarPage titles={titles} onOpenTitle={setSelected} />
           ) : (
-            <PastDays pastDays={pastDays} pastScores={pastScore}/>
+            <PastDays pastDays={pastDays} pastScores={pastScore} onSelect={onSelectPastDay}/>
           )
         }
         </div>
 
         <div className={"editor-pane"+ (
-          ["past_days", "pdf"].includes(activePanel) ? " hidden" : "")}>
+          ["past_days", "pdf", "calendar"].includes(activePanel) ? " hidden" : "")}>
 
           <Editor
             
-            height="100%"
+            height="93%"
             language="bestself"
             theme="bestself-dark"
             value={content}
@@ -305,8 +329,8 @@ useEffect(() => {
           
 
             <div className="viewer-pane">
-              <textarea disabled value={(pastDaysContent || "").substr(0, 2000) + (pastDaysContent.length > 2000 ? "\n\n... (truncated)" : "")}
-              style={{width: "100%", height: "100%", fontSize: "14px", fontFamily: "'JetBrains Mono', 'Fira Code', monospace", padding: "10px", boxSizing: "border-box"}}
+              <textarea disabled value={pastDays?.filter((day) => day.date === selectedPastDay).at(0)?.rawDayContent ?? "Select a day from the list to view its content."}
+              style={{width: "100%", height: "60%", fontSize: "14px", fontFamily: "'JetBrains Mono', 'Fira Code', monospace", padding: "10px", boxSizing: "border-box"}}
               > </textarea>
               
             </div>
@@ -317,6 +341,34 @@ useEffect(() => {
       </div>
 
       <DockNav active={dockActive} onSelect={handleDockSelect} />
+      <MusicPlayerWidget />
+
+      { false && <div style={{ width: '100%', height: '100%', position: 'fixed' }}>
+        <Grainient
+          color1="#898789"
+          color2="#605f65"
+          color3="#a4a4ac"
+          timeSpeed={0.85}
+          colorBalance={-0.09}
+          warpStrength={1.85}
+          warpFrequency={6.2}
+          warpSpeed={2.7}
+          warpAmplitude={24}
+          blendAngle={71}
+          blendSoftness={0.05}
+          rotationAmount={820}
+          noiseScale={2.55}
+          grainAmount={0.1}
+          grainScale={3.5}
+          grainAnimated={false}
+          contrast={1.15}
+          gamma={1.4}
+          saturation={1.45}
+          centerX={-0.07}
+          centerY={-0.08}
+          zoom={0.85}
+        />
+      </div> }
     </div>
   );
 }

@@ -34,6 +34,7 @@ export interface Daily {
   readonly date: string;           // ISO: "2025-10-30"
   readonly rawDateToken: string;   // "#10.30.2025"
   readonly categories: readonly DailyCategory[];
+  readonly rawDayContent: string; // full raw content of the day, for reference
 }
 
 // ── Score models ──────────────────────────────────────────────────────────────

@@ -106,6 +106,8 @@ function BarLabel(props: any) {
 // ── Main component ────────────────────────────────────────────────────────────
 
 export function DashboardPanel({ day, score, days, scores }: Props) {
+  console.log("days = ", days);
+
   if (!day || !score) {
     return (
       <div className="panel-empty">

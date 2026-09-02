@@ -94,6 +94,7 @@ function parseDay(reader: LineReader, diag: ParseDiagnostic[]): Daily {
     date: parsed ?? "1970-01-01",
     rawDateToken: header,
     categories,
+    rawDayContent: "some content for " + header ,//linesForDay(reader, header),
   };
 }
 
