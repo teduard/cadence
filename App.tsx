@@ -30,7 +30,6 @@ const STORAGE_KEY = "bestself_content";
 const PastDays_STORAGE_KEY = "bestself_past_days";
 
 const DEFAULT_CONTENT = `#${new Date().getMonth() + 1}.${new Date().getDate()}.${new Date().getFullYear()}
-#09.18.2026
 \t- Personal
 \t\t- TODO: morning routine
 \t\t\t> #TIME: ESTIMATED [00:30:00] | ACTUAL [00:00:00]
