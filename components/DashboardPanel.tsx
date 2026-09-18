@@ -218,56 +218,56 @@ export function DashboardPanel({ day, score, days, scores }: Props) {
         return acc + (item.computedActualTime ? item.computedActualTime : 0);
       },0);
   
-let pastDaysContent = useMemo(() => (
-  <>
-  <div className="section-title">Past {MAX_DAYS}-days / Task stats</div>
+// let pastDaysContent = useMemo(() => (
+//   <>
+//   <div className="section-title">Past {MAX_DAYS}-days / Task stats</div>
 
-  <div className="item-list">
-    {summaryItems.map((item, i) => (
-      <>
-      {
-      categories
-      .includes(item.summary) &&
-      <div
-        key={i}
-        className="item-row"
-        style={{ paddingLeft: `${item.treeLevel * 12}px` }}
-      >
-        <span
-          className="item-status"
-          style={{ color: "var(--green)" }}
-        >
-          {/* how many time the status was OK / how many times the task appeared */}
-          {item.actualTime} OK 
-          <span
-          style={{ color: "var(--text)" }}
-        >
-          &nbsp;/ {item.estimatedTime}
-        </span>
-        </span>
+//   <div className="item-list">
+//     {summaryItems.map((item, i) => (
+//       <>
+//       {
+//       categories
+//       .includes(item.summary) &&
+//       <div
+//         key={i}
+//         className="item-row"
+//         style={{ paddingLeft: `${item.treeLevel * 12}px` }}
+//       >
+//         <span
+//           className="item-status"
+//           style={{ color: "var(--green)" }}
+//         >
+//           {/* how many time the status was OK / how many times the task appeared */}
+//           {item.actualTime} OK 
+//           <span
+//           style={{ color: "var(--text)" }}
+//         >
+//           &nbsp;/ {item.estimatedTime}
+//         </span>
+//         </span>
         
-        <span className="item-summary">{item.summary}</span>
-        {item.computedActualTime > 0 && (
-          <span className="item-time">{formatDuration(item.computedActualTime)}</span>
-        )}
-      </div>
-      }
-      </>
-    ))}
+//         <span className="item-summary">{item.summary}</span>
+//         {item.computedActualTime > 0 && (
+//           <span className="item-time">{formatDuration(item.computedActualTime)}</span>
+//         )}
+//       </div>
+//       }
+//       </>
+//     ))}
 
-    <hr style={{ border: "1px solid var(--muted)" }}/>
-    <div
-        key={"total"}
-        className="item-row">
-            <span className="item-status"></span>
-            <span className="item-summary">Total time</span>
-        <span className="item-time">{formatDuration(totalTime)}</span>
-    </div>
+//     <hr style={{ border: "1px solid var(--muted)" }}/>
+//     <div
+//         key={"total"}
+//         className="item-row">
+//             <span className="item-status"></span>
+//             <span className="item-summary">Total time</span>
+//         <span className="item-time">{formatDuration(totalTime)}</span>
+//     </div>
 
-    </div>
+//     </div>
     
-      </>
-),[summaryItems, MAX_DAYS, totalTime]);
+//       </>
+// ),[summaryItems, MAX_DAYS, totalTime]);
 
   return (
     <div className="dashboard">
@@ -407,7 +407,7 @@ let pastDaysContent = useMemo(() => (
       </div>
 
       {/* Past MAX_DAYS-days stats */}
-      {pastDaysContent}
+      {/* {pastDaysContent} */}
     </div>
   );
 }
