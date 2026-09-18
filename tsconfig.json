@@ -7,7 +7,11 @@
 		//"moduleResolution": "node",
 		"allowSyntheticDefaultImports": true,
 		"types": ["vite/client"],
-		"lib": ["DOM", "DOM.Iterable", "ESNext"]
+		"lib": ["DOM", "DOM.Iterable", "ESNext"],
+
+		"noImplicitAny": false,
+    	"allowImportingTsExtensions": true,
+    	"noEmit": true
 	},
 	//"include": ["./src"]
 	"include": ["./"]
