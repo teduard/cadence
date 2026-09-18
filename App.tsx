@@ -30,19 +30,64 @@ const STORAGE_KEY = "bestself_content";
 const PastDays_STORAGE_KEY = "bestself_past_days";
 
 const DEFAULT_CONTENT = `#${new Date().getMonth() + 1}.${new Date().getDate()}.${new Date().getFullYear()}
+#09.18.2026
 \t- Personal
-\t\t- OK: morning routine
-\t\t\t> #TIME: ESTIMATED [00:30:00] | ACTUAL [00:25:00]
-\t\t- TODO: read 30 pages
+\t\t- TODO: morning routine
 \t\t\t> #TIME: ESTIMATED [00:30:00] | ACTUAL [00:00:00]
+\t\t- IN_PROGRESS: read some books
+\t\t\t> #TIME: ESTIMATED [00:30:00] | ACTUAL [00:00:00]
+\t\t\t- OK: read the first chapter
+\t\t\t\t> #TIME: ESTIMATED [00:20:00] | ACTUAL [00:10:00]
+\t\t\t- IN_PROGRESS: read second chapter
+\t\t\t\t> #TIME: ESTIMATED [01:00:00] | ACTUAL [00:30:00]
 \t- Work
-\t\t- IN_PROGRESS: build taskify editor
+\t\t- ON_HOLD: build AI feature
 \t\t\t> #TIME: ESTIMATED [04:00:00] | ACTUAL [01:30:00]
+\t\t\t/Definition
+\t\t\t\t? temporary question
+\t\t\t\t> needs to be done
+\t\t\t\t. is already known
+\t\t\t/Timeline
+\t\t\t\t> step 1
+\t\t\t\t> step 2
 \t\t\t/Result
-\t\t\t\tmonaco integration working
+\t\t\t\t. how it went
+\t\t\t\t. why it went well/bad
+\t\t\t\t. am I happy about the result overall ?
+
+\t\t\t\t- OK: step 1
+\t\t\t\t\t> #TIME: ESTIMATED [00:00:00] | ACTUAL [01:00:00]
+\t\t\t\t- OK: step 2
+\t\t\t\t\t> #TIME: ESTIMATED [00:00:00] | ACTUAL [00:30:00]
+\t\t\t\t- ON_HOLD: step 3
+\t\t\t\t\t> #TIME: ESTIMATED [00:15:00] | ACTUAL [00:00:00]
+\t\t\t\t\t/Result
+\t\t\t\t\t\tsub-task is needed
+\t\t\t\t\t- TODO: step 4 to further split the work
 \t- Urgent
 \t\t- NOK: is there anything urgent today?
 \t\t\t> #TIME: ESTIMATED [00:15:00] | ACTUAL [00:00:00]
+
+\t- House
+\t\t- TODO: this needs to be started
+\t\t- IN_PROGRESS: task is in progress
+\t\t- OK: task is ready
+\t\t- NOK: task failed
+\t\t- OVERDUE: estimated time was exceeded
+\t\t- ON_HOLD: task is paused
+
+#09.17.2026
+\t- Personal
+\t\t- TODO: this was for a past day
+\t\t- OK: this was done
+\t- Hobby
+\t\t- OK: workhop
+\t\t\t/Result
+\t\t\t\tThis was done as part of a hobby
+\t\t\t\tunder a different category
+#08.10.2025
+\t- Simple
+\t\t- OK: just staring out
 `;
 
 const calculator = new DailyScoreCalculator();
