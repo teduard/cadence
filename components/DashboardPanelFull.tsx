@@ -105,7 +105,7 @@ function BarLabel(props: any) {
 
 // ── Main component ────────────────────────────────────────────────────────────
 
-export function DashboardPanel({ day, score, days, scores }: Props) {
+export function DashboardPanelFull({ day, score, days, scores }: Props) {
   console.log("days = ", days);
 
   if (!day || !score) {

@@ -1,0 +1,84 @@
+@property --gradient-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+/* 
+.glow-wrapper {
+  position: relative;
+  display: inline-block;
+  border-radius: 20px;
+  isolation: isolate; 
+} */
+
+.glow-wrapper {
+  position: relative;
+  display: inline-block;
+  border-radius: 20px;
+  isolation: isolate;
+
+  /* add these */
+  align-self: flex-start;   /* stops flex-parent stretch */
+  justify-self: start;      /* stops grid-parent stretch, if applicable */
+  /* width: fit-content; */
+  height: fit-content;
+
+  width: 80%;
+    /* padding: 1px; */
+    margin: 10px auto;
+}
+
+/* crisp thin border line */
+.glow-wrapper::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: -2;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--gradient-angle),
+    transparent 0deg,
+    #5b8dff 60deg,
+    #63e6be 140deg,
+    #ffb454 220deg,
+    transparent 320deg,
+    transparent 360deg
+  );
+  animation: rotate-gradient 6s linear infinite;
+}
+
+/* soft ambient glow bleeding outside the box */
+.glow-wrapper::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: -3;
+  border-radius: inherit;
+  background: inherit; /* reuses the same conic-gradient */
+  background: conic-gradient(
+    from var(--gradient-angle),
+    transparent 0deg,
+    #5b8dff 60deg,
+    #63e6be 140deg,
+    #ffb454 220deg,
+    transparent 320deg,
+    transparent 360deg
+  );
+  filter: blur(18px);
+  opacity: 0.55;
+  animation: rotate-gradient 6s linear infinite;
+}
+
+@keyframes rotate-gradient {
+  to {
+    --gradient-angle: 360deg;
+  }
+}
+
+.glow-inner {
+  position: relative;
+  background: #17181c; /* your actual UI background */
+  border-radius: inherit;
+  padding: 1px; /* reveals the ::before line as a "border" */
+}
+

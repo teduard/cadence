@@ -71,7 +71,9 @@ useEffect(() => {
                 status: "OK",
                 treeLevel: 1,
                 summary: day.date,
-                computedActualTime: 10,
+                estimatedTime: day.estimatedTime,
+                actualTime: day.actualTime,
+                computedActualTime: day.computedActualTime,
                 score: Math.floor(day.dayScore),
                 countitemsScore: Math.floor(day.dayCountItemsScore),
             }
@@ -101,6 +103,9 @@ let pastDaysContent = useMemo(() => (
               style={{ paddingLeft: `${item.treeLevel * 12}px` }}
               onClick={() => {
                     console.log("Clicked item:", item.summary);
+
+                    console.log("item = ", item);
+
                     setSelectedItem(item.summary);
                     onSelect(item.summary);
                     }
@@ -129,6 +134,16 @@ let pastDaysContent = useMemo(() => (
                         {/* {item.status} */}
                         {item.countitemsScore}%
                     </span>
+
+
+                    {/* <span className="item-statistic">E - A </span> 
+                    <span
+                        
+                        style={{ color: STATUS_COLORS[item.status] ?? "var(--muted)" }}
+                    > */}
+                        {/* {item.status} */}
+                        {/* {item.estimatedTime} - {item.computedActualTime} = {item.estimatedTime - item.computedActualTime}
+                    </span> */}
                   </>
                 )}
 

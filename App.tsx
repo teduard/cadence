@@ -23,6 +23,8 @@ import './App.css';
 import { DockNav } from "./components/ui/DockNav.tsx";
 import { MusicPlayerWidget } from "./components/ui/MusicPlayerWidget.tsx";
 import { Title } from "./types.ts";
+import {SlicedText} from "./components/SlicedText.tsx";
+import { GlowBorder } from "./components/GlowBorder/GlowBorder.tsx";
 
 const STORAGE_KEY = "bestself_content";
 const PastDays_STORAGE_KEY = "bestself_past_days";
@@ -84,10 +86,15 @@ export default function App() {
     handlePastDaysContentChange(pastDaysContent);
   }, []);
 
+  const [showDashboard, setShowDashboard] = useState<boolean>(true);
   const [days, setDays] = useState<Daily[]>([]);
   const [diagnostics, setDiagnostics] = useState<ParseDiagnostic[]>([]);
   const [activePanel, setActivePanel] = useState<"dashboard" | "past_days" | "diagnostics" | "pdf" | "calendar">("dashboard");
   const parseTimer = useRef<ReturnType<typeof setTimeout>>();
+
+  const handleShowDashboard = () => {
+    setShowDashboard(!showDashboard)
+  }
 
   // Register language, theme, completions once Monaco is ready
   useEffect(() => {
@@ -211,6 +218,7 @@ useEffect(() => {
           <span className="logo-sub">your daybook</span>
         </div>
         <div className="header-right">
+          <SlicedText />
         {/* <button
             className={`panel-tab ${activePanel === "past_days" ? "active" : ""}`}
             onClick={() => setActivePanel("past_days")}
@@ -261,7 +269,29 @@ useEffect(() => {
           {activePanel === "dashboard" ? (
             <div className="dashboard-pane">
 
-            <DashboardPanel day={latestDay} score={latestScore} days={pastDays} scores={pastScore} />
+            {/* 
+              painting this components triggers the cursor to be misplaced while typing.
+              the profiler shows about 5s for rendering this component
+              why does it take so much time ?
+              and this becomes really annoying when you are trying to type in the editor and the cursor jumps to the end of the text
+            */}
+            
+            <div>
+            <legend>
+              <br/>
+              &nbsp;&nbsp;
+              <input 
+                id="showDashboard"
+                type="checkbox" 
+                checked={showDashboard} 
+                onChange={handleShowDashboard}/>
+                &nbsp;
+              Show dashboard</legend>
+
+              {showDashboard && 
+                <DashboardPanel day={latestDay} score={latestScore} days={pastDays} scores={pastScore} /> 
+              }
+            </div>
 
             {/* <StreakMapStats days={pastDays} scores={pastScore} statType="steps"/>
             <StreakMapStats days={pastDays} scores={pastScore} statType="phone_time"/>
@@ -275,10 +305,19 @@ useEffect(() => {
             <DiagnosticsPanel diagnostics={diagnostics} />
           ) : activePanel === "calendar" ? (
             <CalendarPage titles={titles} onOpenTitle={setSelected} />
-          ) : (
+          ) : activePanel === "past_days" ? (
             <PastDays pastDays={pastDays} pastScores={pastScore} onSelect={onSelectPastDay}/>
+          ) : (
+              <GlowBorder className="search-wrapper">
+                <input
+                  className="search-input"
+                  placeholder="Search box"
+                />
+              </GlowBorder>
           )
         }
+
+        
         </div>
 
         <div className={"editor-pane"+ (
@@ -329,8 +368,12 @@ useEffect(() => {
           
 
             <div className="viewer-pane">
-              <textarea disabled value={pastDays?.filter((day) => day.date === selectedPastDay).at(0)?.rawDayContent ?? "Select a day from the list to view its content."}
-              style={{width: "100%", height: "60%", fontSize: "14px", fontFamily: "'JetBrains Mono', 'Fira Code', monospace", padding: "10px", boxSizing: "border-box"}}
+              <textarea disabled value={"DAY:" + JSON.stringify(pastDays?.filter((day) => day.date === selectedPastDay).at(0) ?? "Select a day from the list to view its content.", null, 2)}
+              style={{width: "150%", height: "45%", fontSize: "14px", fontFamily: "'JetBrains Mono', 'Fira Code', monospace", padding: "10px", boxSizing: "border-box", "marginBottom": "20px"}}
+              > </textarea>
+
+              <textarea disabled value={"SCORE:" + JSON.stringify(pastScore?.filter((day) => day.date === selectedPastDay).at(0) ?? "Select a day from the list to view its content.", null, 2)}
+              style={{width: "150%", height: "42%", fontSize: "14px", fontFamily: "'JetBrains Mono', 'Fira Code', monospace", padding: "10px", boxSizing: "border-box"}}
               > </textarea>
               
             </div>
@@ -345,9 +388,13 @@ useEffect(() => {
 
       { false && <div style={{ width: '100%', height: '100%', position: 'fixed' }}>
         <Grainient
-          color1="#898789"
-          color2="#605f65"
-          color3="#a4a4ac"
+          // color1="#898789"
+          // color2="#605f65"
+          // color3="#a4a4ac"
+          color1="#3e5d5f"
+          //color1="rgba(120,120,200,1)"
+          color2="#3e3d3f"
+          color3="#2e2d4f"
           timeSpeed={0.85}
           colorBalance={-0.09}
           warpStrength={1.85}

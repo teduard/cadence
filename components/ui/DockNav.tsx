@@ -1,16 +1,17 @@
 import { Home, Code2, LayoutGrid, Search, LogIn, Printer, Clock, Calendar } from "lucide-react";
+import { StepBack } from "lucide-react";
 //import "./DockNav.css";
 import "./DockNav.css";
 
 const ITEMS = [
-  { id: "past_days", icon: Clock, label: "Past Days" },
-  { id: "dashboard", icon: Home, label: "Home" },
-  { id: "calendar", icon: Calendar, label: "Calendar" },
+  { id: "past_days", icon: StepBack, label: "Past Days" },
+  { id: "dashboard", icon: Clock, label: "Home" },
+  // DEACTIVATED { id: "calendar", icon: Calendar, label: "Calendar" },
   { id: "diagnostics", icon: Code2, label: "Cadence DSL" },
   // { id: "grid", icon: LayoutGrid, label: "Dashboard" },
   //{ id: "search", icon: Search, label: "Search" },
   { id: "pdf", icon: Printer, label: "Export PDF:"},
-  //{ id: "login", icon: LogIn, label: "Sign in" },
+  { id: "login", icon: LogIn, label: "Sign in" },
 ] as const;
 
 export function DockNav({

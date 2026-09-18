@@ -1,22 +1,31 @@
 import { useEffect, useRef, useState } from "react";
-import { Play, Pause, Volume2, Volume1, VolumeX } from "lucide-react";
+import { Play, Pause, Volume2, Volume1, VolumeX, SkipForward } from "lucide-react";
 import "./MusicPlayerWidget.css";
 
-// Free, redistributable demo track (SoundHelix) — swap `src` for your own
-// licensed audio. Title/artist below are placeholders, not a claim about
-// what's actually playing.
-const DEMO_TRACK = {
-  title: "Sample Track",
-  artist: "Demo Audio",
-  //src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-  src: "http://localhost/music/Subeme%20La%20Radio.mp3",
-};
+const songs = [
+  "a_quiet_life.mp3",
+  "Subeme_La_Radio.mp3",
+  "secrets.mp3",
+  "green_day.mp3",
+]
+
+
 
 export function MusicPlayerWidget() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(0.7);
   const [muted, setMuted] = useState(false);
+
+  // Free, redistributable demo track (SoundHelix) — swap `src` for your own
+  // licensed audio. Title/artist below are placeholders, not a claim about
+  // what's actually playing.
+  const [DEMO_TRACK, setDEMO_TRACK] = useState<any>({
+    title: "Sample Track",
+    artist: "Demo Audio",
+    //src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+    src: `http://localhost/music/${songs[Math.floor(Math.random() * songs.length)]}`,
+  });
 
   useEffect(() => {
     const a = audioRef.current;
@@ -34,6 +43,51 @@ export function MusicPlayerWidget() {
       setIsPlaying(false);
     }
   };
+
+  const playSong = () => {
+    const a = audioRef.current;
+    if (!a) return;
+    if(!isPlaying) {
+        a.play();
+        setIsPlaying(true);
+    }
+  }
+
+  const pauseSong = () => {
+    const a = audioRef.current;
+    if (!a) return;
+
+    if(isPlaying) {
+        a.pause();
+        setIsPlaying(false);
+    }
+  }
+
+  const playNext = () => {
+    //const a = audioRef.current;
+
+    // setIsPlaying(false);
+    // if (!a) return;
+    // a.pause();
+
+    setDEMO_TRACK(
+      {
+        title: "Sample Track",
+        artist: "Demo Audio",
+        src: `http://localhost/music/${songs[Math.floor(Math.random() * songs.length)]}`,
+      });
+
+    // a.play();
+    // setIsPlaying(true);
+
+    // console.log("IN PLAYNEXT, DEMO_TRACK:", DEMO_TRACK);
+    // console.log('isPlaying:', isPlaying);
+
+    // pauseSong();
+    // playSong();
+    
+    
+  }
 
   const toggleMute = () => {
     const a = audioRef.current;
@@ -53,6 +107,11 @@ export function MusicPlayerWidget() {
   };
 
   const VolumeIcon = muted || volume === 0 ? VolumeX : volume < 0.5 ? Volume1 : Volume2;
+
+  useEffect(() => {
+      console.log("IN MusicPlayerWidget, DEMO_TRACK:", DEMO_TRACK);
+      console.log('isPlaying:', isPlaying);
+  }, [DEMO_TRACK, isPlaying]);
 
   return (
     <div className="music-widget">
@@ -91,6 +150,14 @@ export function MusicPlayerWidget() {
           aria-label="Volume"
         />
       </div>
+
+      <button
+        className="music-widget__play"
+        onClick={playNext}
+        aria-label={isPlaying ? "Pause" : "Play"}
+      >
+        <SkipForward size={15} fill="currentColor" />
+      </button>
     </div>
   );
 }

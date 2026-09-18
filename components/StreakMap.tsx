@@ -38,11 +38,11 @@ const catFilter = "Personal";
 const taskSummaryFilter = 
 //"mancat 2200 calorii zilnic";
 //"mers la sala";
-//"GABA mia";
+"GABA mia";
 //"1h40min, facut 8000 pasi pe zi";
 //"luat glicemia cu aparatul OneTouch";
 //"citit carti dezvoltare personala sau alte subiecte";
-"get free book from https://www.packtpub.com/free-learning";
+//"get free book from https://www.packtpub.com/free-learning";
 
     useEffect(() => {
         console.log("days modified in StreakMap:", days);
@@ -90,12 +90,12 @@ const taskSummaryFilter =
 // panelColors={['#f4decd', '#e4b293', '#d48462', '#c2533a', '#ad001d', '#6c0012']}
 style={{ color: '#ffffff' }}
                 value={value}
-                width={850}
+                width={1850}
                 height={150}
                 space={3}
                 weekLabels={['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']}
-                startDate={new Date('2025/01/01')}
-                endDate={new Date('2025/12/31')}
+                startDate={new Date('2024/03/25')}
+                endDate={new Date('2026/09/03')}
                 monthPlacement="top"
                 monthLabels={['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']}
                 rectRender={(props, data) => {
